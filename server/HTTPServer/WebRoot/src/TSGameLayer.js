@@ -1,7 +1,5 @@
 cc.dumpConfig();
 
-TSLog = cc.log
-
 var TSGameLayer = cc.Layer.extend({
     //Sys
     sprite: null,

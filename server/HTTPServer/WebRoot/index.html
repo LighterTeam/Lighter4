@@ -33,18 +33,30 @@
         G_Output = null;
 
         function TSLog(sLog){
-            G_Output.innerHTML += sLog + "<br>";
+            G_Output.innerHTML += (sLog + "<br>\n");
         }
+		
+		G_SceneType = {
+			TSMainMenuLayer:0,
+			TSAboutLayer:1,
+			TSGameLayer:2,
+			TSHallLayer:3,
+			TSSettingLayer:4,
+			TSRoomLayer:5,
+			TSJoinLayer:6
+		};
+
+		G_SceneState = G_SceneType.TSMainMenuLayer;
 
         // initialize
         window.onload = function() {
             var UURL = "127.0.0.1";//"spiritring.xicp.net"
             var AdaptSCfgPort = 9901;//26498 // 9901
-
+			
             input = document.getElementById('input');
             G_Output = document.getElementById('output');
             input.value = "login:a";
-
+			
             G_hSocket = WebSocketEngine(UURL, AdaptSCfgPort,
                     function(){
                         var sPacket = {};
@@ -56,7 +68,7 @@
                         {
                             case "ConnectGateWay":
                                 ConnectGateWay(UURL, oPacket.Port);
-                                G_Output.innerHTML += "" + oPacket.Port
+                                TSLog("" + oPacket.Port);
                                 break;
                         }
                     },
@@ -67,7 +79,7 @@
             function ConnectGateWay(sIP, iPORT) {
                 G_hSocket = WebSocketEngine(sIP, iPORT,
                         function(){
-                            G_Output.innerHTML += "<strong>网关链接成功!</strong> Port:" + iPORT + " IP:" + sIP + "<br>";
+                            TSLog("<strong>网关链接成功!</strong> Port:" + iPORT + " IP:" + sIP + "<br>");
                             G_hSocket.PORT = iPORT;
                             G_hSocket.IP = sIP;
 							G_SocketInfo = {};
@@ -82,37 +94,31 @@
 									//var mainScene = TSMainMenu.scene();
 									//director.runWithScene(mainScene); //进入主场景
 									G_UserInfo = {};
-									G_UserInfo.NAME = oPacket.UUID.toString();
 									G_UserInfo.UUID = oPacket.UUID.toString();
-									
+									break;
+								case "LoginSuccess":
+									G_UserInfo.NAME = oPacket.NAME;
 									myApp = new cocos2dApp(TSMainMenu.scene);
 									break;
 							}
 						
-                            if (G_SceneState == G_SceneType.TSGameLayer) {
-                                TSGameLayer.MessageProc(oPacket);
-                                return;
-                            }
-
-                            if (G_SceneState == G_SceneType.TSMainMenuLayer) {
-                                TSMainMenu.MessageProc(oPacket);
-                                return;
-                            }
-
-                            if (G_SceneState == G_SceneType.TSHallLayer) {
-                                TSHallLayer.MessageProc(oPacket);
-                                return;
-                            }
-
-                            if (G_SceneState == G_SceneType.TSRoomLayer) {
-                                TSRoomLayer.MessageProc(oPacket);
-                                return;
-                            }
-
-                            if (G_SceneState == G_SceneType.TSJoinLayer) {
-                                TSJoinLayer.MessageProc(oPacket);
-                                return;
-                            }
+							switch (G_SceneState) {
+								case G_SceneType.TSGameLayer:
+									TSGameLayer.MessageProc(oPacket);
+									break;
+								case G_SceneType.TSMainMenuLayer:
+									TSMainMenu.MessageProc(oPacket);
+									break;
+								case G_SceneType.TSHallLayer:
+									TSHallLayer.MessageProc(oPacket);
+									break;
+								case G_SceneType.TSRoomLayer:
+									TSRoomLayer.MessageProc(oPacket);
+									break;
+								case G_SceneType.TSJoinLayer:
+									TSJoinLayer.MessageProc(oPacket);
+									break;
+							}
                         },
 
                         function(){

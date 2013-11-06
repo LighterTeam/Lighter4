@@ -58,16 +58,6 @@ var cocos2dApp = cc.Application.extend({
     }
 });
 
-G_SceneType = {
-    TSMainMenuLayer:0,
-    TSAboutLayer:1,
-    TSGameLayer:2,
-    TSHallLayer:3,
-    TSSettingLayer:4,
-    TSRoomLayer:5,
-    TSJoinLayer:6
-};
 
-G_SceneState = G_SceneType.TSMainMenuLayer;
 
 
