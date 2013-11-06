@@ -1,0 +1,95 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>TimeShift后台管理器</title>
+    <link rel="stylesheet" href="jqueryUI/development-bundle/themes/base/jquery.ui.all.css">
+    <script src="jqueryUI/development-bundle/jquery-1.9.1.js"></script>
+    <script src="jqueryUI/development-bundle/ui/jquery.ui.core.js"></script>
+    <script src="jqueryUI/development-bundle/ui/jquery.ui.widget.js"></script>
+    <script src="jqueryUI/development-bundle/ui/jquery.ui.tabs.js"></script>
+    <script src="TSWebSocketEngine.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+
+    <link rel="stylesheet" href="jqueryUI/development-bundle/demos/demos.css">
+
+    <script>
+        var input = null;
+        var G_Output = null;
+        var G_hSocket = null;
+        var G_Text = "";
+
+        $(function() {
+            $( "#tabs" ).tabs();
+
+            input = $('#input');
+            G_Output = $('#output');
+            input.val("GetUserInfo,a");
+
+            G_hSocket = WebSocketEngine("192.168.1.9", 9002,
+                    function(){
+                        TSLog("连接大厅服务器成功!");
+                    },
+                    function(oPacket){
+                        switch(oPacket.MM)
+                        {
+                            case "Hall_Info":
+                                TSLog("服务器返回:" + oPacket.BUF);
+                                break;
+                        }
+                    },
+                    function(){
+                    }
+            );
+        });
+
+        function _send(){
+            var sPacket = {};
+            sPacket.MM = "SysOrder";
+            sPacket.Order = input.value;
+            TSLog('<strong>命令发送: </strong>' + input.val() + '<br>\n');
+
+            SendBuffer(G_hSocket, JSON.stringify(sPacket));
+        }
+
+        function _clear(){
+            G_Text = "";
+            G_Output.html(G_Text);
+        }
+
+        function TSLog(sLog){
+            G_Text += sLog + "<br>";
+            G_Output.html(G_Text);
+        }
+
+    </script>
+</head>
+<body>
+
+<div id="tabs">
+    <ul>
+        <li><a href="#tabs-Hall">大厅</a></li>
+        <li><a href="#tabs-Game">游戏服</a></li>
+        <li><a href="#tabs-DB">DB</a></li>
+    </ul>
+    <div id="tabs-Hall">
+        <p>
+            <input type="text" id="input">
+            <button id="send" onclick="_send()">Send</button>
+            <button id="clear" onclick="_clear()">Clear</button>
+            <div id="output"></div>
+        </p>
+    </div>
+    <div id="tabs-Game">
+        <p>2</p>
+    </div>
+    <div id="tabs-DB">
+        <p>3</p>
+    </div>
+</div>
+
+<div class="demo-description">
+    <p></p>
+</div>
+</body>
+</html>

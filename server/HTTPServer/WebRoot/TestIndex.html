@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>TimeShiftGame</title>
+    <style>
+        div#output {
+            border: 1px solid #000;
+            width: 960px;
+            height: 150px;
+            overflow: auto;
+            background-color: #333;
+            color: #6cf;
+        }
+
+        strong {
+            color: #f66;
+        }
+
+        input#input {
+            border: 1px solid #000;
+            width: 640px;
+        }
+
+        button {
+            border: 1px solid #000;
+            width: 100px;
+        }
+    </style>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        var input = null;
+        G_Output = null;
+
+        function TSLog(sLog){
+            G_Output.innerHTML += sLog + "<br>";
+        }
+
+        // initialize
+        window.onload = function() {
+            var UURL = "127.0.0.1";//"spiritring.xicp.net"
+            var AdaptSCfgPort = 9901;//26498 // 9901
+
+            input = document.getElementById('input');
+            G_Output = document.getElementById('output');
+            input.value = "login:a";
+
+            G_hSocket = {};
+            G_hSocket.PORT = "50"
+
+            var oPacket = {}
+            oPacket.NAME = "Enel"
+            oPacket.UUID = "1"
+            TSMainMenu.MessageProc(oPacket);
+
+//            G_hSocket = WebSocketEngine(UURL, AdaptSCfgPort,
+//                    function(){
+//                        var sPacket = {};
+//                        sPacket.MM = "ConnectGateWay";
+//                        SendBuffer(G_hSocket, sPacket);
+//                    },
+//                    function(oPacket){
+//                        switch(oPacket.MM)
+//                        {
+//                            case "ConnectGateWay":
+//                                ConnectGateWay(UURL, oPacket.Port);
+//                                G_Output.innerHTML += "" + oPacket.Port
+//                                break;
+//                        }
+//                    },
+//                    function(){
+//                    }
+//            );
+
+            function ConnectGateWay(sIP, iPORT) {
+                G_hSocket = WebSocketEngine(sIP, iPORT,
+                        function(){
+                            G_Output.innerHTML += "<strong>网关链接成功!</strong> Port:" + iPORT + " IP:" + sIP + "<br>";
+                            G_hSocket.PORT = iPORT;
+                            G_hSocket.IP = sIP;
+                        },
+
+                        function(oPacket){
+                            if (G_SceneState == G_SceneType.TSGameLayer) {
+                                TSGameLayer.MessageProc(oPacket);
+                                return;
+                            }
+
+                            if (G_SceneState == G_SceneType.TSMainMenuLayer) {
+                                TSMainMenu.MessageProc(oPacket);
+                                return;
+                            }
+
+                            if (G_SceneState == G_SceneType.TSHallLayer) {
+                                TSHallLayer.MessageProc(oPacket);
+                                return;
+                            }
+
+                            if (G_SceneState == G_SceneType.TSRoomLayer) {
+                                TSRoomLayer.MessageProc(oPacket);
+                                return;
+                            }
+
+                            if (G_SceneState == G_SceneType.TSJoinLayer) {
+                                TSJoinLayer.MessageProc(oPacket);
+                                return;
+                            }
+                        },
+
+                        function(){
+
+                        }
+                );
+
+            }
+        }
+
+        function _send(){
+            var sPacket = {};
+            sPacket.MM = "SysOrder";
+            sPacket.Order = input.value;
+            SendBuffer(G_hSocket, sPacket);
+            G_Output.innerHTML += ('<strong>命令发送: </strong>' + input.value + '<br>\n');
+        };
+
+        function _clear(){
+            G_Output.innerHTML = '';
+        };
+
+    </script>
+</head>
+<body>
+<div style="width: 320px; height: 480px;">
+    <canvas id="gameCanvas" width="640" height="480" ></canvas>
+</div>
+
+<input type="text" id="input">
+<button id="send" onclick="_send()">Send</button>
+<button id="clear" onclick="_clear()">Clear</button>
+<div id="output"></div>
+
+</body>
+</html>
+
+<script src="cocos2d.js"> </script>

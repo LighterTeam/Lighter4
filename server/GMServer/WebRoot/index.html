@@ -1,0 +1,391 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>TimeShift后台管理器</title>
+    <link rel="stylesheet" href="jqueryUI/development-bundle/themes/base/jquery.ui.all.css">
+    <script src="jqueryUI/development-bundle/jquery-1.9.1.js"></script>
+    <script src="jqueryUI/development-bundle/ui/jquery.ui.core.js"></script>
+    <script src="jqueryUI/development-bundle/ui/jquery.ui.widget.js"></script>
+    <script src="jqueryUI/development-bundle/ui/jquery.ui.tabs.js"></script>
+    <script src="jqueryUI/development-bundle/ui/jquery.ui.mouse.js"></script>
+    <script src="jqueryUI/development-bundle/ui/jquery.ui.button.js"></script>
+    <script src="jqueryUI/development-bundle/ui/jquery.ui.draggable.js"></script>
+    <script src="jqueryUI/development-bundle/ui/jquery.ui.position.js"></script>
+    <script src="jqueryUI/development-bundle/ui/jquery.ui.resizable.js"></script>
+    <script src="jqueryUI/development-bundle/ui/jquery.ui.button.js"></script>
+    <script src="jqueryUI/development-bundle/ui/jquery.ui.dialog.js"></script>
+
+    <script src="TSWebSocketEngine.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <link rel="stylesheet" href="jqueryUI/development-bundle/demos/demos.css">
+    <style>
+        body { font-size: 50%; }
+        label, input { display:block; }
+        input.text { margin-bottom:12px; width:95%; padding: .4em; }
+        fieldset { padding:0; border:0; margin-top:25px; }
+        h1 { font-size: 1.2em; margin: .6em 0; }
+        div#users-contain { width: 350px; margin: 20px 0; }
+        div#users-contain table { margin: 1em 0; border-collapse: collapse; width: 100%; }
+        div#users-contain table td, div#users-contain table th { border: 1px solid #eee; padding: .6em 10px; text-align: left; }
+        .ui-dialog .ui-state-error { padding: .3em; }
+        .validateTips { border: 1px solid transparent; padding: 0.3em; }
+    </style>
+    <script>
+        var cfg = {
+            AdaptServerPort: 9900,
+            AdaptServerIP: "192.168.1.9",
+
+            GateWayServerPort: 10000,
+            GateWayServerIP: "192.168.1.9",
+
+            HallServerPort: 9002,
+            HallServerIP: "192.168.1.9",
+
+            VDB_Port_WS: 9101,
+            VDB_IP_WS: "192.168.1.9",
+
+            end: null
+        };
+
+        var G_Input = null;
+        var G_Output = null;
+        var G_hSocket = null;
+        var G_Text = "";
+        var G_Selected = 0;
+        var G_Title = "";
+        var G_CurIP = "";
+        var G_CurPort = "";
+
+        var Hall_Ip;
+        var Hall_Port;
+
+        var DB_Ip;
+        var DB_Port;
+
+        $(function() {
+            var name = $( "#name" ),
+                    password = $( "#password" ),
+                    allFields = $( [] ).add( name ).add( password ),
+                    tips = $( ".validateTips" );
+
+            function updateTips( t ) {
+                tips
+                        .text( t )
+                        .addClass( "ui-state-highlight" );
+                setTimeout(function() {
+                    tips.removeClass( "ui-state-highlight", 1500 );
+                }, 500 );
+            }
+
+            function checkLength( o, n, min, max ) {
+                if ( o.val().length > max || o.val().length < min ) {
+                    o.addClass( "ui-state-error" );
+                    updateTips( "Length of " + n + " must be between " +
+                            min + " and " + max + "." );
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+
+            function checkRegexp( o, regexp, n ) {
+                if ( !( regexp.test( o.val() ) ) ) {
+                    o.addClass( "ui-state-error" );
+                    updateTips( n );
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+
+            $( "#resizable" ).resizable();
+            $( "#db_resizable" ).resizable();
+
+            G_Input = $('#Adapt_Input');
+            G_Output = $('#output');
+
+            var Adapt_Ip = $("#Adapt_Ip");
+            var Adapt_Port = $("#Adapt_Port");
+            Adapt_Ip.val(cfg.AdaptServerIP);
+            Adapt_Port.val(cfg.AdaptServerPort);
+
+            $("#GW_Ip").val(cfg.GateWayServerIP);
+
+            Hall_Ip = $("#Hall_Ip");
+            Hall_Port = $("#Hall_Port");
+            Hall_Ip.val(cfg.HallServerIP);
+            Hall_Port.val(cfg.HallServerPort);
+
+            DB_Ip = $("#DB_Ip");
+            DB_Port = $("#DB_Port");
+            DB_Ip.val(cfg.VDB_IP_WS);
+            DB_Port.val(cfg.VDB_Port_WS);
+
+            G_Title = "适配服";
+            G_CurIP = Adapt_Ip.val();
+            G_CurPort = Adapt_Port.val();
+
+            var tabs = $( "#tabs" );
+            tabs.tabs();
+            tabs.on( "tabsactivate", function( event, ui ) {
+                G_Selected = ui.newTab.index();
+                G_Title = ui.newTab[0].innerText;
+                switch(G_Selected){
+                    case 0: //适配服
+                        G_Input = $('#Adapt_Input');
+                        G_CurIP = Adapt_Ip.val();
+                        G_CurPort = Adapt_Port.val();
+                        break;
+                    case 1: //网关
+                        G_Input = $('#GW_Input');
+                        break;
+                    case 2: //大厅
+                        G_Input = $('#Hall_Input');
+                        G_CurIP = Hall_Ip.val();
+                        G_CurPort = Hall_Port.val();
+                        break;
+                    case 3: //游戏服
+                        break;
+                    case 4: //DB
+                        G_Input = $('#DB_Input');
+                        G_CurIP = DB_Ip.val();
+                        G_CurPort = DB_Port.val();
+                        break;
+                }
+            });
+
+            $( "#dialog-form" ).dialog({
+                autoOpen: false,
+                height: 300,
+                width: 350,
+                modal: true,
+                buttons: {
+                    "Login": function() {
+                        var bValid = true;
+                        allFields.removeClass( "ui-state-error" );
+
+                        bValid = bValid && checkLength( name, "username", 3, 16 );
+                        bValid = bValid && checkLength( password, "password", 5, 16 );
+
+                        bValid = bValid && checkRegexp( name, /^[a-z]([0-9a-z_])+$/i, "Username may consist of a-z, 0-9, underscores, begin with a letter." );
+                        bValid = bValid && checkRegexp( password, /^([0-9a-zA-Z])+$/, "Password field only allow : a-z 0-9" );
+
+                        if ( bValid ) {
+                            TSLog("<strong>RootLogin</strong> Name:" + name.val() + " Password:" + password.val());
+
+                            var sPacket = {};
+                            sPacket.MM = "Login";
+                            sPacket.Name = name.val();
+                            sPacket.PassWord = password.val();
+                            SendBuffer(G_hSocket, JSON.stringify(sPacket));
+
+                            $( this ).dialog( "close" );
+                        }
+                    },
+                    Cancel: function() {
+                        $( this ).dialog( "close" );
+                    }
+                },
+                close: function() {
+                    allFields.val( "" ).removeClass( "ui-state-error" );
+                }
+            });
+
+            //$( "#dialog-form" ).dialog( "open" );
+            $( "#create-user" )
+                    .button()
+                    .click(function() {
+                        $( "#dialog-form" ).dialog( "open" );
+                    });
+        });
+
+        function _send(){
+            var myDate = new Date();
+            TSLog( "<strong>" + myDate.toLocaleString() + " " + G_Title + " SendOrder: </strong>" + G_Input.val());
+
+            var sPacket = {};
+            sPacket.MM = "SysOrder";
+            sPacket.Order = G_Input.val();
+            SendBuffer(G_hSocket, JSON.stringify(sPacket));
+        }
+
+        function _clear(){
+            G_Text = "";
+            G_Output.html(G_Text);
+        }
+
+        function _connect() {
+            switch(G_Selected){
+                case 0: //适配服
+                    G_Input = $('#Adapt_Input');
+                    G_CurIP = Adapt_Ip.val();
+                    G_CurPort = Adapt_Port.val();
+                    break;
+                case 1: //网关
+                    G_Input = $('#GW_Input');
+                    break;
+                case 2: //大厅
+                    G_Input = $('#Hall_Input');
+                    G_CurIP = Hall_Ip.val();
+                    G_CurPort = Hall_Port.val();
+                    break;
+                case 3: //游戏服
+                    break;
+                case 4: //DB
+                    G_Input = $('#DB_Input');
+                    G_CurIP = DB_Ip.val();
+                    G_CurPort = DB_Port.val();
+                    break;
+            }
+            TSLog("=============连接服务<strong>[" + G_Title + "]</strong> IP:" + G_CurIP + " Port:" + G_CurPort);
+            G_hSocket = WebSocketEngine(G_CurIP, parseInt(G_CurPort),
+                    function(){
+                        TSLog("连接成功! :" + G_Title);
+                    },
+                    function(oPacket){
+                        switch(oPacket.MM)
+                        {
+                            case "Hall_Info":
+                                TSLog("<backserver>" + G_Title + "服务器返回:</backserver><br>" + oPacket.BUF);
+                                break;
+                            case "DB_Back":
+                                TSLog("<backserver>" + G_Title + "服务器返回:</backserver><br>" + oPacket.BUF);
+                                break;
+                            case "Login":
+                                TSLog("<backserver>" + G_Title + "服务器返回:</backserver><br>" + oPacket.BUF);
+                                break;
+                        }
+                    },
+                    function(){
+                    }
+            );
+        }
+
+        function TSLog(sLog){
+            G_Text = sLog + "<br>" + G_Text;
+            G_Output.html(G_Text);
+        }
+    </script>
+</head>
+<body>
+
+<a href="http://www.bejson.com/go.html?u=http://www.bejson.com/jsonview2/">JSON查看器</a>
+
+<div id="dialog-form" title="Administrator Login">
+    <p class="validateTips">All form fields are required.</p>
+    <form>
+        <fieldset>
+            <label for="name">Name</label>
+            <input type="text" name="name" id="name" class="text ui-widget-content ui-corner-all" />
+            <label for="password">Password</label>
+            <input type="password" name="password" id="password" value="" class="text ui-widget-content ui-corner-all" />
+        </fieldset>
+    </form>
+</div>
+<button id="create-user">Administrator Login</button>
+
+<div id="tabs">
+    <ul>
+        <li><a href="#tabs-Adapt">适配服</a></li>
+        <li><a href="#tabs-GW">网关</a></li>
+        <li><a href="#tabs-Hall">大厅</a></li>
+        <li><a href="#tabs-Game">游戏服</a></li>
+        <li><a href="#tabs-DB">DB</a></li>
+        <li><a href="#tabs-VDB">DB查询</a></li>
+    </ul>
+    <div id="tabs-GW">
+        <p>
+            <p>
+                IP:<input type="text" id="GW_Ip">
+                Port:<input type="text" id="GW_Port">
+                <button id="GW_Connect" onclick="_connect()">Connect</button>
+            </p>
+            <input type="text" id="GW_Input">
+            <button id="GW_Send" onclick="_send()">Send</button>
+            <button id="GW_Clear" onclick="_clear()">Clear</button>
+        </p>
+    </div>
+    <div id="tabs-Adapt">
+        <p>
+            <p>
+                IP:  <input type="text" id="Adapt_Ip">
+                Port:<input type="text" id="Adapt_Port">
+                <button id="Adapt_Connect" onclick="_connect()">Connect</button>
+            </p>
+            <input type="text" id="Adapt_Input">
+            <button id="Adapt_Send" onclick="_send()">Send</button>
+            <button id="Adapt_Clear" onclick="_clear()">Clear</button>
+        </p>
+    </div>
+    <div id="tabs-Hall">
+        <p>
+            <p>
+                IP:<input type="text" id="Hall_Ip">
+                Port:<input type="text" id="Hall_Port">
+                <button id="Hall_Connect" onclick="_connect()">Connect</button>
+            </p>
+            <p>
+                GMOrder:<input width="360" type="text" id="Hall_Input" />
+            </p>
+            <p>
+                <button id="Hall_Send" onclick="_send()">Send</button>
+                <button id="Hall_Clear" onclick="_clear()">Clear</button>
+            </p>
+            <p>
+                <div id="resizable" class="ui-widget-content">
+                    <h3 class="ui-widget-header">游戏命令帮助</h3>
+                    GetUserInfo //获取玩家的信息. 格式: GetUserInfo, 名称 <br>
+                    Room //获取大厅当前的所有房间信息. 格式: Room <br>
+                    Run //运行一条javascript语句 格式: Run,语句
+                </div>
+            </p>
+        </p>
+
+    </div>
+    <div id="tabs-Game">
+        <p>游戏服</p>
+    </div>
+    <div id="tabs-DB">
+        <p>
+            <p>
+                IP:<input type="text" id="DB_Ip">
+                Port:<input type="text" id="DB_Port">
+                <button id="DB_Connect" onclick="_connect()">Connect</button>
+            </p>
+            <p>
+                GMOrder:<input type="text" id="DB_Input" />
+            </p>
+            <p>
+                <button id="DB_Send" onclick="_send()">Send</button>
+                <button id="DB_Clear" onclick="_clear()">Clear</button>
+            </p>
+            <p>
+            <div id="db_resizable" class="ui-widget-content">
+                <h3 class="ui-widget-header">游戏命令帮助</h3>
+                All     //查看所有的DB信息 <br>
+                Run     //运行一条javascript语句 格式: Run,语句
+            </div>
+            </p>
+        </p>
+    </div>
+<div id="tabs-VDB">
+    <p>DB查询</p>
+    <p>
+        IP:<input type="text" id="VDB_Ip">
+        Port:<input type="text" id="VDB_Port">
+        <button id="VDB_Connect" onclick="Show(VDB_Ip,VDB_Port)">Connect</button>
+    </p>
+</div>
+</div>
+
+<div id="output"></div>
+
+
+<div class="demo-description">
+    <p></p>
+
+</div>
+
+</body>
+</html>

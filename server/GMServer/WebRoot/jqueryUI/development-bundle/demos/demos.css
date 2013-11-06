@@ -1,0 +1,48 @@
+body {
+	font-size: 62.5%;
+	font-family: "Trebuchet MS", "Arial", "Helvetica", "Verdana", "sans-serif";
+}
+
+table {
+	font-size: 1em;
+}
+
+.demo-description {
+	clear: both;
+	padding: 12px;
+	font-size: 1.3em;
+	line-height: 1.4em;
+}
+
+.ui-draggable, .ui-droppable {
+	background-position: top;
+}
+
+div#output {
+    border: 1px solid #000;
+    height: 320px;
+    overflow: auto;
+    background-color: #333;
+    color: #6cf;
+}
+strong {
+    color: #f66;
+}
+
+backserver {
+    color: #C6E746;
+}
+
+input#Hall_Input {
+     border: 1px solid #000;
+     width: 400px;
+ }
+
+input#DB_Input {
+    border: 1px solid #000;
+    width: 1000px;
+}
+button {
+    border: 1px solid #000;
+    width: 100px;
+}
