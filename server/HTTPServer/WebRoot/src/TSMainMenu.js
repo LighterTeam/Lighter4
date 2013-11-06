@@ -1,6 +1,5 @@
 cc.dumpConfig();
 
-var G_UserInfo = null;
 
 var TSMainMenu = cc.Layer.extend({
 
@@ -29,7 +28,7 @@ var TSMainMenu = cc.Layer.extend({
         logo.setPosition(cc.p(0, 250));
         this.addChild(logo, 10, 1);
 
-        var lbScore = cc.LabelBMFont.create("Name:" + sName + " Port:" + G_hSocket.PORT, s_arial14_fnt);
+        var lbScore = cc.LabelBMFont.create("Name:" + sName + " Port:" + G_SocketInfo.PORT, s_arial14_fnt);
         lbScore.setAnchorPoint( cc.p(1,0) );
         lbScore.setAlignment( cc.TEXT_ALIGNMENT_RIGHT );
         lbScore.setPosition(winSize.width - 15 , winSize.height - 30);
@@ -86,21 +85,21 @@ var TSMainMenu = cc.Layer.extend({
     },
 
     onNewGame:function (pSender) {
-        console.log("onNewGame Clicked!");
+        cc.log("onNewGame Clicked!");
 
         var scene = cc.Scene.create();
         scene.addChild(TSGameLayer.create());
         cc.Director.getInstance().replaceScene(cc.TransitionFade.create(1.2, scene));
     },
     onSettings:function (pSender) {
-        console.log("onSettings Clicked!");
+        cc.log("onSettings Clicked!");
 
         var scene = cc.Scene.create();
         scene.addChild(TSSettingsLayer.create());
         cc.Director.getInstance().replaceScene(cc.TransitionFade.create(1.2, scene));
     },
     onAbout:function (pSender) {
-        console.log("onAbout Clicked!");
+        cc.log("onAbout Clicked!");
 
         var scene = cc.Scene.create();
         scene.addChild(TSAboutLayer.create());
@@ -127,12 +126,6 @@ TSMainMenu.scene = function () {
 };
 
 TSMainMenu.MessageProc = function(oPacket) {
-    G_Output.innerHTML += ('<strong>登陆成功!</strong> UUID:' + oPacket.UUID + '<br>\n');
-
-    G_UserInfo = {};
-    G_UserInfo.NAME = oPacket.NAME;
-    G_UserInfo.UUID = oPacket.UUID;
-
-    myApp = new cocos2dApp(TSMainMenu.scene);
+    // create a scene. it's an autorelease object
 
 }

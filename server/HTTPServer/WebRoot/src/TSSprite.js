@@ -9,16 +9,12 @@ TSSprite.CreateSprite = function(pos, color) {
     var fileName = "res/chess" + color + ".png";
 
     var argnum = arguments.length;
-    var sprite = new TSSprite();
+    var sprite = cc.Sprite.create(fileName)
 
     sprite.pos = pos;
     sprite.iColor = color;
 
-    if (sprite && sprite.initWithFile(fileName)) {
-        return sprite;
-    }
-
-    return null;
+    return sprite;
 }
 
 

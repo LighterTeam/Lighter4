@@ -1,5 +1,7 @@
 cc.dumpConfig();
 
+TSLog = cc.log
+
 var TSGameLayer = cc.Layer.extend({
     //Sys
     sprite: null,
@@ -108,6 +110,8 @@ var TSGameLayer = cc.Layer.extend({
         this.m_iStat = 0;
         this.m_vCacheSpr = [];
 
+        this.schedule(this.draw, 0);
+
         var bRet = false;
         if (this._super()) {
             G_SceneState = G_SceneType.TSGameLayer;
@@ -128,7 +132,8 @@ var TSGameLayer = cc.Layer.extend({
 
 
             var pR = bg.getTextureRect();
-            this.m_pOO = new TSPoint(winSize.width/2 - 320 / 2 - pR.size.width/4, winSize.height/2 - pR.size.height/4);
+            cc.log(JSON.stringify(pR))
+            this.m_pOO = new TSPoint(winSize.width/2 - 320 / 2 - pR.width/4, winSize.height/2 - pR.height/4);
 
             for (var i = 0; i < 9; i++) {
                 for (var j = 0; j < 9; j++) {
@@ -137,7 +142,7 @@ var TSGameLayer = cc.Layer.extend({
             }
 
             // 初始化对手数据
-            this.m_pSubOO = new TSPoint(winSize.width/2 + 320 / 2 - pR.size.width/4, winSize.height/2 - pR.size.height/4);
+            this.m_pSubOO = new TSPoint(winSize.width/2 + 320 / 2 - pR.width/4, winSize.height/2 - pR.height/4);
             for (var i = 0; i < 9; i++) {
                 for (var j = 0; j < 9; j++) {
                     this.m_pSubMeshPos[i][j] = cc.p(this.m_pSubOO.m_x + i * 33 + 32/2, this.m_pSubOO.m_y + j * 33 + 32/2);
@@ -159,7 +164,7 @@ var TSGameLayer = cc.Layer.extend({
                 sPacket.Ball.push(_tmp);
             }
             sPacket.Map = this.m_Map.m_map;
-            SendBuffer(G_hSocket, sPacket);
+            TSSendBuffer(JSON.stringify(sPacket));
 
 
             ///Sys
@@ -198,7 +203,7 @@ var TSGameLayer = cc.Layer.extend({
 
     onBackCallback:function (pSender) {
         var sPacket = {MM:"LeaveGame"};
-        SendBuffer(G_hSocket, sPacket);
+        TSSendBuffer(JSON.stringify(sPacket));
 
         //TSTS
         var scene = cc.Scene.create();
@@ -235,7 +240,7 @@ var TSGameLayer = cc.Layer.extend({
             return false;
         }
 
-        console.log("我被点中了! x = " + xy.m_x + " y = " + xy.m_y);
+        cc.log("我被点中了! x = " + xy.m_x + " y = " + xy.m_y);
 
         if (this.m_iStat == 0) {
             this.m_Choose = this.GetMeshSprite(xy);
@@ -259,7 +264,7 @@ var TSGameLayer = cc.Layer.extend({
 
             var tsNode = this.m_Star.getResult();
             if (tsNode.pPos.m_x != pT.m_x || tsNode.pPos.m_y != pT.m_y) {
-                //printf("错误的寻路!");
+                cc.log("错误的寻路!");
                 this.m_iStat = 0;
 
                 this.m_Choose.stopAllActions();
@@ -612,7 +617,7 @@ var TSGameLayer = cc.Layer.extend({
                 sPacket.Ball.push(_tmp);
             }
             sPacket.Map = this.m_Map.m_map;
-            SendBuffer(G_hSocket, sPacket);
+            TSSendBuffer(JSON.stringify(sPacket));
 
             //测试用
 //            for (var i = 0; i < this.m_pPathSpriteList.length; i++) {

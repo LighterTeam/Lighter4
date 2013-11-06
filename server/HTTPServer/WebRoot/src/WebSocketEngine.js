@@ -19,9 +19,11 @@
         return hSocket;
     };
 
-    SendBuffer = function(hSocket, sPacket) {
-        if ("send" in hSocket) {
-            hSocket.send(JSON.stringify(sPacket));
-        }
+    TSSendBuffer = function(sPacket) {
+        if ("send" in G_hSocket) {
+            G_hSocket.send(sPacket);
+        } else {
+			TSLog("G_hSocket non!")
+		}
     }
 }())

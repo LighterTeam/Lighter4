@@ -49,7 +49,7 @@
                     function(){
                         var sPacket = {};
                         sPacket.MM = "ConnectGateWay";
-                        SendBuffer(G_hSocket, sPacket);
+                        TSSendBuffer(JSON.stringify(sPacket));
                     },
                     function(oPacket){
                         switch(oPacket.MM)
@@ -70,9 +70,25 @@
                             G_Output.innerHTML += "<strong>网关链接成功!</strong> Port:" + iPORT + " IP:" + sIP + "<br>";
                             G_hSocket.PORT = iPORT;
                             G_hSocket.IP = sIP;
+							G_SocketInfo = {};
+							G_SocketInfo.PORT = iPORT.toString();
                         },
 
                         function(oPacket){
+							TSLog("JS->MessageProc:" + JSON.stringify(oPacket));
+
+							switch(oPacket.MM) {
+								case "RegistUUID":
+									//var mainScene = TSMainMenu.scene();
+									//director.runWithScene(mainScene); //进入主场景
+									G_UserInfo = {};
+									G_UserInfo.NAME = oPacket.UUID.toString();
+									G_UserInfo.UUID = oPacket.UUID.toString();
+									
+									myApp = new cocos2dApp(TSMainMenu.scene);
+									break;
+							}
+						
                             if (G_SceneState == G_SceneType.TSGameLayer) {
                                 TSGameLayer.MessageProc(oPacket);
                                 return;
@@ -111,7 +127,7 @@
             var sPacket = {};
             sPacket.MM = "SysOrder";
             sPacket.Order = input.value;
-            SendBuffer(G_hSocket, sPacket);
+            TSSendBuffer(JSON.stringify(sPacket));
             G_Output.innerHTML += ('<strong>命令发送: </strong>' + input.value + '<br>\n');
         };
 

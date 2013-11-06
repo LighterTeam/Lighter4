@@ -259,7 +259,9 @@ function SendBufferToClient(iUUID, oPacket) {
     var hSocket = G_PoolClientSocket[iUUID];
 	if(hSocket.CType == 1) {
 		tcp.SendBuffer(hSocket, JSON.stringify(oPacket));
+		TSLog.debug("TCP SendBufferToClient:" + oPacket);
 	} else if(hSocket.CType == 2) {
 	    ws.SendBuffer(hSocket, JSON.stringify(oPacket));
+		TSLog.debug("WS SendBufferToClient:" + oPacket);
 	}
 }

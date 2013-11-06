@@ -27,17 +27,23 @@ var TSRoomLayer = cc.Layer.extend({
             var GetRoomList = cc.MenuItemLabel.create(label, this.onGetRoomList);
             GetRoomList.setScale(0.8);
 
+            cc.log("1")
+
             var cp_GetRoomList = GetRoomList.getPosition();
             cp_GetRoomList.y = -175.0;
             GetRoomList.setPosition(cp_GetRoomList);
 
+            cc.log("2")
+
             this.menu = cc.Menu.create(back, GetRoomList);
             this.addChild(this.menu);
 
-            this.subMenu = cc.Menu.create(back, GetRoomList);
+            this.subMenu = cc.Menu.create();
             this.addChild(this.subMenu);
 
             bRet = true;
+
+            cc.log("3")
 
             this.onGetRoomList(null);
         }
@@ -50,7 +56,7 @@ var TSRoomLayer = cc.Layer.extend({
             MM:"SysOrder",
             Order:"GetRoomList"
         };
-        SendBuffer(G_hSocket, sPacket);
+        TSSendBuffer(JSON.stringify(sPacket));
     },
 
     onBackCallback:function (pSender) {
@@ -66,7 +72,7 @@ var TSRoomLayer = cc.Layer.extend({
         var sPacket = {};
         sPacket.MM = "SysOrder";
         sPacket.Order = "JoinRoom:" + RoomID;
-        SendBuffer(G_hSocket, sPacket);
+        TSSendBuffer(JSON.stringify(sPacket));
 
         var scene = cc.Scene.create();
         scene.addChild(TSJoinLayer.create());

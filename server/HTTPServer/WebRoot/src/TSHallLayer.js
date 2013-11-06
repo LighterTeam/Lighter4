@@ -44,7 +44,7 @@ var TSHallLayer = cc.Layer.extend({
                 MM:"SysOrder",
                 Order:"CreateRoom"
             };
-            SendBuffer(G_hSocket, sPacket);
+            TSSendBuffer(JSON.stringify(sPacket));
         }
 
         return bRet;
@@ -55,7 +55,7 @@ var TSHallLayer = cc.Layer.extend({
             MM:"SysOrder",
             Order:"EnterGame"
         };
-        SendBuffer(G_hSocket, sPacket);
+        TSSendBuffer(JSON.stringify(sPacket));
     },
 
     onBackCallback:function (pSender) {
@@ -63,7 +63,7 @@ var TSHallLayer = cc.Layer.extend({
             MM:"SysOrder",
             Order:"RemoveRoom"
         };
-        SendBuffer(G_hSocket, sPacket);
+        TSSendBuffer(JSON.stringify(sPacket));
     },
 
     onMessageProc:function(oPacket){
