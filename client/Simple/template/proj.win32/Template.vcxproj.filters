@@ -1,0 +1,172 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="resource">
+      <UniqueIdentifier>{adda7c7f-035d-41f3-8bce-c3c88648983e}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;jpg;jpeg;jpe;png;manifest</Extensions>
+    </Filter>
+    <Filter Include="TSEngine">
+      <UniqueIdentifier>{12881fe2-e3af-4e80-90e6-bcc93109cdd0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game">
+      <UniqueIdentifier>{1f2c20ef-52eb-4a8c-9282-5698f19f0685}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Classes">
+      <UniqueIdentifier>{a4c50ea7-60aa-40c2-b8d6-0c7840699330}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;def;odl;idl;hpj;bat;asm</Extensions>
+    </Filter>
+    <Filter Include="TSEngine\Define">
+      <UniqueIdentifier>{9110e208-35fa-4a2a-a3b7-d5f06eb3578d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="TSEngine\Interface">
+      <UniqueIdentifier>{1cce0547-9463-4f57-a3a5-ce632c73f4f4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="TSEngine\JsonCpp">
+      <UniqueIdentifier>{04ed1da0-8f29-4e77-8544-3a264aa17c56}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="TSEngine\TSCom">
+      <UniqueIdentifier>{51605c34-324b-4f91-8262-a188ddd17126}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\CatchMike.ico">
+      <Filter>resource</Filter>
+    </None>
+    <None Include="..\Resources\CloseSelected.png">
+      <Filter>resource</Filter>
+    </None>
+    <None Include="..\Resources\CloseNormal.png">
+      <Filter>resource</Filter>
+    </None>
+    <None Include="..\Resources\HelloWorld.png">
+      <Filter>resource</Filter>
+    </None>
+    <None Include="..\Classes\JsonCpp\json_internalarray.inl">
+      <Filter>TSEngine\JsonCpp</Filter>
+    </None>
+    <None Include="..\Classes\JsonCpp\json_internalmap.inl">
+      <Filter>TSEngine\JsonCpp</Filter>
+    </None>
+    <None Include="..\Classes\JsonCpp\json_valueiterator.inl">
+      <Filter>TSEngine\JsonCpp</Filter>
+    </None>
+    <None Include="..\Classes\JsonCpp\sconscript">
+      <Filter>TSEngine\JsonCpp</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\Classes\TSEngine\TSTCP.h">
+      <Filter>TSEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\TSEngine\TSCommon.h">
+      <Filter>TSEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\TSEngine\TSEngine.h">
+      <Filter>TSEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\TSEngine\TSEvent.h">
+      <Filter>TSEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\TSEngine\TSObject.h">
+      <Filter>TSEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\TSEngine\TSSocket.h">
+      <Filter>TSEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\TSEngine\exbuffer.h">
+      <Filter>TSEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\TSEngine\TSScriptJS.h">
+      <Filter>TSEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\TSMainScene.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\JsonCpp\json_batchallocator.h">
+      <Filter>TSEngine\JsonCpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\TSConnect.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\TSEngine\TSLog.h">
+      <Filter>TSEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Common\Interface\crash_interface.h">
+      <Filter>TSEngine\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Common\Interface\ITSComSystem.h">
+      <Filter>TSEngine\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Common\TSCom\TSCom.hpp">
+      <Filter>TSEngine\TSCom</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Common\TSCom\TSError.hpp">
+      <Filter>TSEngine\TSCom</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Common\TSCom\TSGUID.hpp">
+      <Filter>TSEngine\TSCom</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Common\TSCom\TSUnknown.hpp">
+      <Filter>TSEngine\TSCom</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Common\Define\TSDump.h">
+      <Filter>TSEngine\Define</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\AppDelegate.h">
+      <Filter>Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="main.h">
+      <Filter>Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\TSApplication.h">
+      <Filter>Classes</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\AppDelegate.cpp">
+      <Filter>Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\TSEngine\TSTCP.cpp">
+      <Filter>TSEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\TSEngine\TSEngine.cpp">
+      <Filter>TSEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\TSEngine\TSEvent.cpp">
+      <Filter>TSEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\TSEngine\TSSocket.cpp">
+      <Filter>TSEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\TSEngine\TSScriptJS.cpp">
+      <Filter>TSEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\TSMainScene.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\JsonCpp\json_reader.cpp">
+      <Filter>TSEngine\JsonCpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\JsonCpp\json_value.cpp">
+      <Filter>TSEngine\JsonCpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\JsonCpp\json_writer.cpp">
+      <Filter>TSEngine\JsonCpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\TSConnect.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\TSEngine\TSLog.cpp">
+      <Filter>TSEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\TSApplication.cpp">
+      <Filter>Classes</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

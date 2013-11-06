@@ -1,0 +1,5 @@
+LIBRARY    "CrashDump"
+EXPORTS
+	DllCanUnloadNow	PRIVATE
+	DllGetObject	PRIVATE
+	DllDestroyModel PRIVATE
